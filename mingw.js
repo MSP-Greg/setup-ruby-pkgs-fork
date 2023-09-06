@@ -93,14 +93,14 @@ const openssl = async () => {
     mingwPkgs = mingwPkgs.replace(/\bopenssl\b/gi, '').trim()
   } else if (!is2022orLater && ruby.abiVers >= '2.5.0' && ruby.abiVers < '3.1.0') {
     msSt = grpSt('install OpenSSL 1.1.1.t')
-    let uri = `https://github.com/ruby/setup-msys2-gcc/releases/download/msys2-packages/${pre}openssl-1.1.1.t-1-any.pkg.tar.zst`
+    let uri = `https://github.com/ruby/setup-msys2-gcc/releases/download/msys2-packages/${pre.trim()}openssl-1.1.1.t-1-any.pkg.tar.zst`
     let fn = `${dlPath}\\ri2.tar.zst`
     await download(uri, fn)
     checkSpace
     execSync(`pacman.exe -Udd --noconfirm --noprogressbar ${fn}`)
     grpEnd(msSt)
     mingwPkgs = mingwPkgs.replace(/\bopenssl\b/gi, '').trim()
-  } else if (is2022orLater && ruby.abiVers >= '2.5.0') {
+  } else if ((is2022orLater && ruby.abiVers >= '2.5.0') || (!is2022orLater && ruby.abiVers >= '3.1.0')) {
     // already installed by setup-ruby
     mingwPkgs = mingwPkgs.replace(/\bopenssl\b/gi, '').trim()
   }
