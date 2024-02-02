@@ -304,7 +304,7 @@ const { download, execSync, execSyncQ, grpSt, grpEnd, getInput, is2022orLater, w
 let msSt
 
 // used to only update MSYS2 database (y parameter) once
-let msys2Sync = '-Sy'
+let msys2Sync = '-Syuu'
 
 // SSD drive, used for most downloads and MSYS
 const drive = (process.env.GITHUB_WORKSPACE || 'C')[0]
