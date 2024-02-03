@@ -146,7 +146,8 @@ const checkSpace = () => {
 // install MinGW packages from mingw input
 const runMingw = async () => {
 
-  if (ruby.abiVers >= '2.4' && !is2022orLater) {
+//  if (ruby.abiVers >= '2.4' && !is2022orLater) {
+  if (ruby.abiVers >= '2.4') {
     msSt = grpSt(`pacman.exe -Sy pacman-mirrors`)
     checkSpace
     execSync(`pacman.exe -Sy ${args} pacman-mirrors`)
