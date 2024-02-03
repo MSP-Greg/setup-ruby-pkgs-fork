@@ -304,7 +304,7 @@ const { download, execSync, execSyncQ, grpSt, grpEnd, getInput, is2022orLater, w
 let msSt
 
 // used to only update MSYS2 database (y parameter) once
-let msys2Sync = '-Syuu'
+let msys2Sync = '-Sy'
 
 // SSD drive, used for most downloads and MSYS
 const drive = (process.env.GITHUB_WORKSPACE || 'C')[0]
@@ -404,13 +404,16 @@ const openssl = async () => {
 const updateGCC = async () => {
   // TODO: code for installing gcc 9.2.0-1 or 9.1.0-3
 
-  msSt = grpSt(`Upgrading gcc for Ruby ${ruby.vers}`)
-  checkSpace
-  let gccPkgs = ['', 'binutils', 'crt', 'headers', 'libiconv', 'isl', 'make', 'mpc', 'mpfr', 'pkgconf', 'windows-default-manifest', 'libwinpthread', 'libyaml', 'winpthreads', 'zlib', 'gcc-libs', 'gcc']
-  execSync(`pacman.exe ${msys2Sync} --nodeps ${args} ${gccPkgs.join(pre)}`)
-  grpEnd(msSt)
+  // from setup-ruby-gcc
+  // base_gcc  = %w[make pkgconf libmangle-git tools-git gcc curl]
+  // base_ruby = %w[gdbm gmp libffi libyaml openssl ragel readline] :
 
-  // await require('./mingw_gcc').run(ruby.vers)
+  msSt = grpSt(`Upgrading gcc and packages for Ruby ${ruby.vers}`)
+  checkSpace
+  // no openssl as different versions are used, installed by ruby/setup-msys2-gcc
+  let gccPkgs = ['', 'make',  'pkgconf', 'libmangle-git', 'tools-git', 'gcc', 'curl', 'gdbm', 'gmp', 'libffi', 'libyaml', 'ragel', 'readline']
+  execSync(`pacman.exe ${msys2Sync} ${args} ${gccPkgs.join(pre)}`)
+  grpEnd(msSt)
 }
 
 // Used to install pre-built MSYS2 from a GitHub release asset, hopefully never
@@ -437,11 +440,13 @@ const checkSpace = () => {
 // install MinGW packages from mingw input
 const runMingw = async () => {
 
-  if (ruby.abiVers >= '2.4' && !is2022orLater) {
+//  if (ruby.abiVers >= '2.4' && !is2022orLater) {
+  if (ruby.abiVers >= '2.4') {
     msSt = grpSt(`pacman.exe -Sy pacman-mirrors`)
     checkSpace
     execSync(`pacman.exe -Sy ${args} pacman-mirrors`)
     grpEnd(msSt)
+    msys2Sync = '-S'
   }
 
   if (mingwPkgs.includes('_upgrade_')) {
